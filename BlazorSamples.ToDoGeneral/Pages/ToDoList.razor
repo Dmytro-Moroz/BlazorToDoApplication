@@ -1,0 +1,45 @@
+﻿@page "/todo"
+@using BlazorSamples.ToDoGeneral.Data
+
+<h3>ToDoList</h3>
+<EditForm Model="_toDoModel" class="form-inline" OnValidSubmit="AddTask">
+    <input class="form-control mx-2" type="text" @bind-value="_toDoModel.TaskName"/>
+    <button class="btn btn-primary mx-2">Add Task</button>
+</EditForm>
+
+<div class="progress-bar my-2 mx-2" style="width: @(IsComplete)%">
+    @(IsComplete)%
+</div>
+
+<ul class="list-group my-2">
+    @foreach (var task in _toDoTasks)
+    {
+        if (task.IsDone)
+        {
+            <li class="list-group-item list-group-item-secondary mx-1" @onclick="(() => task.IsDone =! task.IsDone)"><del>@task.TaskName</del></li>
+        }
+        else
+        {
+            <li class="list-group-item list-group-item-success mx-1" @onclick="(() => task.IsDone =! task.IsDone)">@task.TaskName</li>  
+        }
+    }
+</ul>
+
+@code {
+    readonly List<ToDoModel> _toDoTasks = new List<ToDoModel>();
+    ToDoModel _toDoModel = new ToDoModel();
+
+    public int IsComplete
+    {
+        get
+        {
+            return _toDoTasks.Count > 0 ? (_toDoTasks.Count(c => c.IsDone) * 100 / _toDoTasks.Count) : 0;
+        }
+    }
+
+    void AddTask()
+    {
+        _toDoTasks.Add(_toDoModel);
+        _toDoModel = new ToDoModel();
+    }
+}
